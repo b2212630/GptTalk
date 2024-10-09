@@ -1572,7 +1572,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1147649739598636238, guid: bb45df82ba657a845aea1b5aa230164f, type: 3}
       propertyPath: m_Name
-      value: TogglePressableButton_32x32mm_IconAndText
+      value: GptOnOffButton
       objectReference: {fileID: 0}
     - target: {fileID: 1147649741191946799, guid: bb45df82ba657a845aea1b5aa230164f, type: 3}
       propertyPath: m_LocalPosition.x
