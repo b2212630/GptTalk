@@ -103,7 +103,7 @@ public class VoicetoText : MonoBehaviour
             Debug.Log("Starting Dictation Recognizer...");
 
             // 発音終了時の結果を処理
-            m_DictationRecognizer.DictationResult += (text, confidence) =>
+            m_DictationRecognizer.DictationResult += (text, confidence) => //怪しいポイント
             {
                 // 音声認識した文章をテキストに表示
                 text_.text = text;
