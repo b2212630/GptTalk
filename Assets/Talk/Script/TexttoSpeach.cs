@@ -58,7 +58,7 @@ public class TexttoSpeach : MonoBehaviour
         request.uploadHandler = new UploadHandlerRaw(postData);
         request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
-        request.SetRequestHeader("Authorization", "Bearer sk-proj-l3cwKfAA5I1NxnaYq5JiT3BlbkFJ5qZL62KyKUFOSrYwGpV7");
+        request.SetRequestHeader("Authorization", "Bearer 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");
 
         //APIのリクエストを送信
         yield return request.SendWebRequest();

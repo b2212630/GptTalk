@@ -158,7 +158,7 @@ public class OpenaiWebAPI : MonoBehaviour
         request.uploadHandler = new UploadHandlerRaw(postData);
         request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
-        request.SetRequestHeader("Authorization", "Bearer sk-proj-qIgEV09hgXFYXr8LOwexT3BlbkFJbzCTR8FoWg6YSA5gpiM5");
+        request.SetRequestHeader("Authorization", "Bearer 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");
 
         //APIのリクエストを送信
         yield return request.SendWebRequest();
