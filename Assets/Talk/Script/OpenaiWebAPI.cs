@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using System;
 using UnityEditor;
 using TMPro;
+using System.IO;
 
 
 public class OpenaiWebAPI : MonoBehaviour
@@ -59,6 +60,12 @@ public class OpenaiWebAPI : MonoBehaviour
         public int total_tokens;
     }
 
+    [System.Serializable]
+    public class ApiConfig
+    {
+        public string API_KEY;
+    }
+
     // テキストに変換された音声を受け取る変数
     private string messageContent;
 
@@ -95,6 +102,31 @@ public class OpenaiWebAPI : MonoBehaviour
         {
             new Message { role = "system", content = prompt },
         };
+
+    private string apiKey;
+
+    void Start()
+    {
+        // APIキーをJSONファイルから読み込む
+        LoadApiKeyFromJson();
+    }
+
+    private void LoadApiKeyFromJson()
+    {
+        // ResourcesフォルダからJSONファイルを読み込む
+        TextAsset jsonFile = Resources.Load<TextAsset>("api_config");
+        if (jsonFile != null)
+        {
+            ApiConfig config = JsonUtility.FromJson<ApiConfig>(jsonFile.text);
+            apiKey = config.API_KEY;
+            Debug.Log("Loaded API Key");
+        }
+        else
+        {
+            Debug.LogError("API config file not found");
+        }
+    }
+
 
     public void GptConnect()
     {
@@ -158,7 +190,7 @@ public class OpenaiWebAPI : MonoBehaviour
         request.uploadHandler = new UploadHandlerRaw(postData);
         request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
-        request.SetRequestHeader("Authorization", "Bearer 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");
+        request.SetRequestHeader("Authorization", "Bearer " + apiKey);
 
         //APIのリクエストを送信
         yield return request.SendWebRequest();

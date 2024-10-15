@@ -71,5 +71,5 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
-#env
-.env
+# APIキーなどの機密情報を含むJSONファイルを無視
+Assets/Resources/api_config.json
