@@ -233,6 +233,7 @@ public class OpenaiWebAPI : MonoBehaviour
             if (response.choices != null && response.choices.Count > 0)
             {
                 string content = response.choices[0].message.content;
+                //TTSにテキストを送る
                 texttoSpeach.ToSpeach(content);
                 messages.Add(new Message { role = "assistant", content = content });
                 //memory.MemoryAssistantContent(content);

@@ -32,6 +32,7 @@ public class TexttoSpeach : MonoBehaviour
         public float duration;
     }
 
+    //OpenaiWebApiから送られてきたテキスト、これを実行する
     public void ToSpeach(string input)
     {
         StartCoroutine(GetMp3(input));
