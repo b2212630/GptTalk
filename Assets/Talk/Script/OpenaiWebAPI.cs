@@ -82,7 +82,7 @@ public class OpenaiWebAPI : MonoBehaviour
     public TextMeshProUGUI GptTextView;
 
     private static string prompt = 
-        "あなたは千歳の大学に通う大学生です。若者の言葉を使ってuserと楽しく会話してください。";
+        "あなたは千歳の大学に通う女子大学生です。若者の言葉を使ってuserと楽しく会話してください。";
 
     
     // private static string prompt =
