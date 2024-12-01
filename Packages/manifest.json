@@ -3,6 +3,7 @@
     "com.microsoft.mixedreality.openxr": "file:MixedReality/com.microsoft.mixedreality.openxr-1.10.1.tgz",
     "com.microsoft.mrtk.graphicstools.unity": "file:MixedReality/com.microsoft.mrtk.graphicstools.unity-0.5.12.tgz",
     "com.microsoft.mrtk.tts.windows": "file:MixedReality/com.microsoft.mrtk.tts.windows-1.0.1.tgz",
+    "com.unity.burst": "1.8.18",
     "com.unity.collab-proxy": "2.5.2",
     "com.unity.feature.development": "1.0.1",
     "com.unity.textmeshpro": "3.0.6",
