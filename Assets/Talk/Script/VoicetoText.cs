@@ -15,6 +15,8 @@ public class VoicetoText : MonoBehaviour
     public delegate void TextChangedEventHandler();
     public event TextChangedEventHandler MessageSendController;
 
+    private bool isDictationActive = false; // 音声認識がアクティブかを管理
+
     // オブジェクトが破棄されるとき
     private void OnDestroy()
     {
@@ -50,7 +52,15 @@ public class VoicetoText : MonoBehaviour
             if (completionCause == DictationCompletionCause.TimeoutExceeded || completionCause == DictationCompletionCause.Complete)
             {
                 //音声認識を起動。
-                //m_DictationRecognizer.Start();
+                Debug.Log($"DictationComplete triggered with cause: {completionCause}");
+
+                // フラグが有効な場合のみ再起動
+                if (isDictationActive)
+                {
+                    m_DictationRecognizer.Start();
+                    Debug.Log("Dictation Restart");
+                }
+                
             }
             else
             {
@@ -73,6 +83,7 @@ public class VoicetoText : MonoBehaviour
         if (m_DictationRecognizer.Status != SpeechSystemStatus.Running)
         {
             Debug.Log("Starting Dictation Recognizer...");
+            isDictationActive = true; // フラグを有効化
             m_DictationRecognizer.Start();
         }
     }
@@ -84,6 +95,7 @@ public class VoicetoText : MonoBehaviour
         if (m_DictationRecognizer.Status == SpeechSystemStatus.Running)
         {
             Debug.Log("Stopping Dictation Recognizer...");
+            isDictationActive = false; // フラグを無効化
             m_DictationRecognizer.Stop();
         }
     }
