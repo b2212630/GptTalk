@@ -43,9 +43,10 @@ public class TexttoSpeach : MonoBehaviour
 
     private IEnumerator GetMp3(string input)
     {
+        var startTime = Time.time;
         Body body = new Body
         {
-            model = "tts-1",
+            model = "tts-1-hd",
             input = input,
             voice = "nova"
         };
@@ -76,6 +77,8 @@ public class TexttoSpeach : MonoBehaviour
 
             // オーディオ再生
             ToAudioClip(request.downloadHandler.data);
+            var duringTime = Time.time - startTime;
+            Debug.Log($"音声処理時間：{duringTime}");
         }
     }
 
