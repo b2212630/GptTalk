@@ -32,6 +32,12 @@ public class TexttoSpeach : MonoBehaviour
         public float duration;
     }
 
+    [System.Serializable]
+    public class ApiConfig
+    {
+        public string API_KEY;
+    }
+
     //OpenaiWebApiから送られてきたテキスト、これを実行する
     public void ToSpeach(string input)
     {
