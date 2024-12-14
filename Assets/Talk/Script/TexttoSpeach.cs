@@ -6,9 +6,13 @@ using UnityEngine.UI;
 using System;
 using System.Net;
 using System.IO;
+using TMPro;
 
 public class TexttoSpeach : MonoBehaviour
 {
+    //GPTの処理時間用
+    public TextMeshProUGUI ProcessingTime;
+
     [System.Serializable]
     public class Body
     {
@@ -84,6 +88,7 @@ public class TexttoSpeach : MonoBehaviour
             // オーディオ再生
             ToAudioClip(request.downloadHandler.data);
             var duringTime = Time.time - startTime;
+            ProcessingTime.text = duringTime.ToString();
             Debug.Log($"音声処理時間：{duringTime}");
         }
     }

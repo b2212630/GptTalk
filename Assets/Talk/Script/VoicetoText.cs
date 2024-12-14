@@ -16,6 +16,8 @@ public class VoicetoText : MonoBehaviour
     public event TextChangedEventHandler MessageSendController;
 
     private bool isDictationActive = false; // 音声認識がアクティブかを管理
+    
+
 
     // オブジェクトが破棄されるとき
     private void OnDestroy()
