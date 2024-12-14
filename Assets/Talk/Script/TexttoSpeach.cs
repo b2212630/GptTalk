@@ -56,7 +56,7 @@ public class TexttoSpeach : MonoBehaviour
         var startTime = Time.time;
         Body body = new Body
         {
-            model = "tts-1-hd",
+            model = "tts-1",
             input = input,
             voice = "nova"
         };
