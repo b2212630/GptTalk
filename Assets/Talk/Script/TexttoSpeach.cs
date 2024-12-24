@@ -14,6 +14,14 @@ public class TexttoSpeach : MonoBehaviour
     public TextMeshProUGUI ProcessingTime;
     //音声再生中かどうか
     private bool isPlayingAudio = false;
+    private float silenceTimer = 0f; // タイマー
+    private bool isCheckingSilence = false; // 沈黙チェック中かどうか
+    private const float silenceThreshold = 10f; // 沈黙と判断する時間（秒）
+
+    private string apiKey;
+
+    // OpenaiWebAPI への参照を持つ（GPTにメッセージを送るため）
+    public OpenaiWebAPI gptApi;
 
     [System.Serializable]
     public class Body
@@ -44,6 +52,66 @@ public class TexttoSpeach : MonoBehaviour
         public string API_KEY;
     }
 
+    void Start()
+    {
+        // APIキーをJSONファイルから読み込む
+        LoadApiKeyFromJson();
+    }
+
+    //APIキーを読み込む
+    private void LoadApiKeyFromJson()
+    {
+        // ResourcesフォルダからJSONファイルを読み込む
+        TextAsset jsonFile = Resources.Load<TextAsset>("api_config");
+        if (jsonFile != null)
+        {
+            ApiConfig config = JsonUtility.FromJson<ApiConfig>(jsonFile.text);
+            apiKey = config.API_KEY;
+            //Debug.Log("Loaded API Key");
+        }
+        else
+        {
+            Debug.LogError("API config file not found");
+        }
+    }
+
+    private void Update()
+    {
+        if (isPlayingAudio)
+    {
+        // 再生中の場合はタイマーをリセット
+        silenceTimer = 0f;
+        isCheckingSilence = false;
+        return; // 再生中なら以降の処理をスキップ
+    }
+
+    if (isCheckingSilence)
+    {
+        // 再生が終了し、沈黙チェック中の場合にタイマーを進める
+        silenceTimer += Time.deltaTime;
+        if (silenceTimer >= silenceThreshold)
+        {
+            Debug.Log("silence for 10seconds");
+            HandleSilence();
+        }
+    }
+    }
+    private void HandleSilence()
+    {
+        // 沈黙時の処理（デバッグ用）
+        Debug.Log("User is silent for too long. Timer value: " + silenceTimer);
+        silenceTimer = 0f; // タイマーリセット
+        isCheckingSilence = false; // チェック停止
+
+        // GPTに沈黙メッセージを送信する処理を一時的に無効化
+        if (gptApi != null)
+        {
+            Debug.Log("send silent message");
+            gptApi.SendSilentMessage();
+        }
+    }
+
+
     //OpenaiWebApiから送られてきたテキスト、これを実行する
     public void ToSpeach(string input)
     {
@@ -72,7 +140,7 @@ public class TexttoSpeach : MonoBehaviour
         request.uploadHandler = new UploadHandlerRaw(postData);
         request.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
         request.SetRequestHeader("Content-Type", "application/json");
-        request.SetRequestHeader("Authorization", "Bearer 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");
+        request.SetRequestHeader("Authorization", "Bearer " + apiKey);
 
         //APIのリクエストを送信
         yield return request.SendWebRequest();
@@ -115,6 +183,7 @@ public class TexttoSpeach : MonoBehaviour
             audioSource = gameObject.GetComponent<AudioSource>();
             audioSource.clip = audioClip;
             isPlayingAudio = true;//再生中
+            isCheckingSilence = false; // 再生中は沈黙チェックを無効化
             audioSource.Play();
              Debug.Log(isPlayingAudio);
 
@@ -123,6 +192,7 @@ public class TexttoSpeach : MonoBehaviour
                 yield return null;
             }
             isPlayingAudio = false;//再生終了
+            isCheckingSilence = true; // 沈黙チェック開始
             Debug.Log(isPlayingAudio);
         }
         else Debug.LogError("Audio file loading error: " + request.error);

@@ -148,7 +148,7 @@ public class OpenaiWebAPI : MonoBehaviour
         {
             ApiConfig config = JsonUtility.FromJson<ApiConfig>(jsonFile.text);
             apiKey = config.API_KEY;
-            Debug.Log("Loaded API Key");
+            //Debug.Log("Loaded API Key");
         }
         else
         {
@@ -255,5 +255,15 @@ public class OpenaiWebAPI : MonoBehaviour
             GptTextView.text = "System Error:レスポンスコードが200、201ではありません。" + request.error;
 
         }
+    }
+
+    public void SendSilentMessage()
+    {
+        string silentMessage = "...(沈黙している)";
+        messages.Add(new Message { role = "user", content = silentMessage });
+        Debug.Log("Sent silence message to GPT: " + silentMessage);
+
+        // GPTに送信
+        StartCoroutine(getGptRecords());
     }
 }
