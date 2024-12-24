@@ -86,7 +86,7 @@ public class OpenaiWebAPI : MonoBehaviour
     
 
     private static string prompt =
-    "以下の[あなたのペルソナ]を基に、会話を進めてください。\n" +
+    "以下の[あなたのペルソナ]になりきって、会話を進めてください。\n" +
     "# [あなたのペルソナ]\n" +
     "## 基本情報\n" +
     "・名前：沖名 桜子\n" +
@@ -259,7 +259,7 @@ public class OpenaiWebAPI : MonoBehaviour
 
     public void SendSilentMessage()
     {
-        string silentMessage = "...(沈黙している)";
+        string silentMessage = "ユーザーが沈黙しています。適切な注意を促してください。";
         messages.Add(new Message { role = "user", content = silentMessage });
         Debug.Log("Sent silence message to GPT: " + silentMessage);
 
