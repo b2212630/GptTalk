@@ -15,6 +15,10 @@ public class VoicetoText : MonoBehaviour
     public delegate void TextChangedEventHandler();
     public event TextChangedEventHandler MessageSendController;
 
+    public delegate void VoiceInputEventHandler(); 
+    public event VoiceInputEventHandler OnVoiceInputDetected; // 音声入力イベント
+
+
     private bool isDictationActive = false; // 音声認識がアクティブかを管理
     
 
@@ -41,6 +45,9 @@ public class VoicetoText : MonoBehaviour
             text_.text = text;
             // GPTに渡す用の変数に格納
             messageContent = text;
+            // 音声入力を通知
+            OnVoiceInputDetected?.Invoke();
+            
             // MessageSendControllerが設定されていれば実行
             if (MessageSendController != null)
             {

@@ -1,17 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
-using System;
-using System.Net;
-using System.IO;
-using TMPro;
 
 public class TexttoSpeach : MonoBehaviour
 {
     //GPTの処理時間用
     public TextMeshProUGUI ProcessingTime;
+
     //音声再生中かどうか
     private bool isPlayingAudio = false;
     private float silenceTimer = 0f; // タイマー
@@ -56,6 +57,11 @@ public class TexttoSpeach : MonoBehaviour
     {
         // APIキーをJSONファイルから読み込む
         LoadApiKeyFromJson();
+
+        if (gptApi != null && gptApi.VoicetoText != null)
+        {
+            gptApi.VoicetoText.OnVoiceInputDetected += OnVoiceInputReceived;
+        }
     }
 
     //APIキーを読み込む
@@ -78,24 +84,32 @@ public class TexttoSpeach : MonoBehaviour
     private void Update()
     {
         if (isPlayingAudio)
-    {
-        // 再生中の場合はタイマーをリセット
-        silenceTimer = 0f;
-        isCheckingSilence = false;
-        return; // 再生中なら以降の処理をスキップ
-    }
-
-    if (isCheckingSilence)
-    {
-        // 再生が終了し、沈黙チェック中の場合にタイマーを進める
-        silenceTimer += Time.deltaTime;
-        if (silenceTimer >= silenceThreshold)
         {
-            Debug.Log("silence for 10seconds");
-            HandleSilence();
+            // 再生中の場合はタイマーをリセット
+            silenceTimer = 0f;
+            isCheckingSilence = false;
+            return; // 再生中なら以降の処理をスキップ
+        }
+
+        if (isCheckingSilence)
+        {
+            // 再生が終了し、沈黙チェック中の場合にタイマーを進める
+            silenceTimer += Time.deltaTime;
+            if (silenceTimer >= silenceThreshold)
+            {
+                Debug.Log("silence for 10seconds");
+                HandleSilence();
+            }
         }
     }
+
+    public void OnVoiceInputReceived()
+    {
+        Debug.Log("Voice input detected. Stopping silence timer.");
+        silenceTimer = 0f; // タイマーをリセット
+        isCheckingSilence = false; // 沈黙チェックを無効化
     }
+
     private void HandleSilence()
     {
         // 沈黙時の処理（デバッグ用）
@@ -110,7 +124,6 @@ public class TexttoSpeach : MonoBehaviour
             gptApi.SendSilentMessage();
         }
     }
-
 
     //OpenaiWebApiから送られてきたテキスト、これを実行する
     public void ToSpeach(string input)
@@ -128,7 +141,7 @@ public class TexttoSpeach : MonoBehaviour
         {
             model = "tts-1",
             input = input,
-            voice = "nova"
+            voice = "nova",
         };
 
         string jsonBody = JsonUtility.ToJson(body);
@@ -171,10 +184,12 @@ public class TexttoSpeach : MonoBehaviour
         StartCoroutine(PlayAudio(filePath));
     }
 
-
     private IEnumerator PlayAudio(string filePath)
     {
-        using UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip("file://" + filePath, AudioType.MPEG);
+        using UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip(
+            "file://" + filePath,
+            AudioType.MPEG
+        );
         yield return request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.Success)
@@ -182,26 +197,36 @@ public class TexttoSpeach : MonoBehaviour
             AudioClip audioClip = DownloadHandlerAudioClip.GetContent(request);
             audioSource = gameObject.GetComponent<AudioSource>();
             audioSource.clip = audioClip;
-            isPlayingAudio = true;//再生中
+            isPlayingAudio = true; //再生中
             isCheckingSilence = false; // 再生中は沈黙チェックを無効化
             audioSource.Play();
-             Debug.Log(isPlayingAudio);
+            Debug.Log(isPlayingAudio);
 
             while (audioSource.isPlaying)
             {
                 yield return null;
             }
-            isPlayingAudio = false;//再生終了
+            isPlayingAudio = false; //再生終了
             isCheckingSilence = true; // 沈黙チェック開始
             Debug.Log(isPlayingAudio);
         }
-        else Debug.LogError("Audio file loading error: " + request.error);
+        else
+            Debug.LogError("Audio file loading error: " + request.error);
 
-        if (deleteCachedFile) File.Delete(filePath);
+        if (deleteCachedFile)
+            File.Delete(filePath);
     }
 
     public bool IsPlayingAudio()
     {
         return isPlayingAudio;
+    }
+
+    void OnDestroy()
+    {
+        if (gptApi != null && gptApi.VoicetoText != null)
+        {
+            gptApi.VoicetoText.OnVoiceInputDetected -= OnVoiceInputReceived;
+        }
     }
 }
