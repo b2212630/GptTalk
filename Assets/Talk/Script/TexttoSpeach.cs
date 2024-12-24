@@ -12,6 +12,8 @@ public class TexttoSpeach : MonoBehaviour
 {
     //GPTの処理時間用
     public TextMeshProUGUI ProcessingTime;
+    //音声再生中かどうか
+    private bool isPlayingAudio = false;
 
     [System.Serializable]
     public class Body
@@ -100,6 +102,8 @@ public class TexttoSpeach : MonoBehaviour
 
         StartCoroutine(PlayAudio(filePath));
     }
+
+
     private IEnumerator PlayAudio(string filePath)
     {
         using UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip("file://" + filePath, AudioType.MPEG);
@@ -110,10 +114,24 @@ public class TexttoSpeach : MonoBehaviour
             AudioClip audioClip = DownloadHandlerAudioClip.GetContent(request);
             audioSource = gameObject.GetComponent<AudioSource>();
             audioSource.clip = audioClip;
+            isPlayingAudio = true;//再生中
             audioSource.Play();
+             Debug.Log(isPlayingAudio);
+
+            while (audioSource.isPlaying)
+            {
+                yield return null;
+            }
+            isPlayingAudio = false;//再生終了
+            Debug.Log(isPlayingAudio);
         }
         else Debug.LogError("Audio file loading error: " + request.error);
 
         if (deleteCachedFile) File.Delete(filePath);
+    }
+
+    public bool IsPlayingAudio()
+    {
+        return isPlayingAudio;
     }
 }
