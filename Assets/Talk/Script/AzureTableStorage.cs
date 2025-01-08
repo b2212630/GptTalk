@@ -7,7 +7,7 @@ using UnityEngine;
 public class AzureTableStorage : MonoBehaviour
 {
     private string connectionString = "DefaultEndpointsProtocol=https;AccountName=b2212630;AccountKey=fyAyRnpakFMkow6847RSM8qd1xgVFj0LiEEZLOFUPZoOzYNOkAiF60ndMr7ER2lASAb93Ics5hnp+AStHu6+Yw==;EndpointSuffix=core.windows.net"; // Azure接続文字列
-    private string tableName = "DialogueTest"; // 作成済みのテーブル名
+    private string tableName = "DialogueGpt4o"; // 作成済みのテーブル名
     private TableServiceClient tableServiceClient;
 
     [SerializeField] private TextMeshProUGUI userText; // ユーザーのTextMeshProUGUI
@@ -30,19 +30,18 @@ public class AzureTableStorage : MonoBehaviour
     }
 
     // テキストの変更を定期的に監視するコルーチン
-    // テキストの変更を監視
     private System.Collections.IEnumerator CheckTextChanges()
     {
         while (true)
         {
-            if (userText.text != lastUserText || gptText.text != lastGptText || processingTimeText.text != lastProcessingTime)
+            if (processingTimeText.text != lastProcessingTime)
             {
-                lastUserText = userText.text;
-                lastGptText = gptText.text;
+                //lastUserText = userText.text;
+                //lastGptText = gptText.text;
                 lastProcessingTime = processingTimeText.text;
 
                 // データを保存
-                SaveDialogueToAzureAsync(lastUserText, lastGptText, lastProcessingTime);
+                SaveDialogueToAzureAsync(userText.text, gptText.text, lastProcessingTime);
             }
 
             yield return new WaitForSeconds(checkInterval);
@@ -66,6 +65,7 @@ public class AzureTableStorage : MonoBehaviour
                     UserMessage = userText,
                     GPTMessage = gptText,
                     ProcessingTime = processingTime,
+                    CurrentTime = DateTime.UtcNow.ToString("o"), // ISO 8601形式で保存
                     Timestamp = DateTime.UtcNow
                 };
 
@@ -95,4 +95,5 @@ public class DialogueEntity : ITableEntity
     public string UserMessage { get; set; } // ユーザーのメッセージ
     public string GPTMessage { get; set; }  // GPTの応答
     public string ProcessingTime { get; set; } // 処理時間
+    public string CurrentTime { get; set; } // 現在時刻
 }

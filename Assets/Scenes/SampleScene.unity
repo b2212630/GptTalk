@@ -2092,6 +2092,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: GptOnOffButton
       objectReference: {fileID: 0}
+    - target: {fileID: 1147649740051854654, guid: bb45df82ba657a845aea1b5aa230164f, type: 3}
+      propertyPath: m_text
+      value: 'GPT on/off
+
+'
+      objectReference: {fileID: 0}
     - target: {fileID: 1147649741191946799, guid: bb45df82ba657a845aea1b5aa230164f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.073
