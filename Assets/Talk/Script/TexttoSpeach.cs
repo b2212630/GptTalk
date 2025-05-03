@@ -17,7 +17,7 @@ public class TexttoSpeach : MonoBehaviour
     private bool isPlayingAudio = false;
     private float silenceTimer = 0f; // タイマー
     private bool isCheckingSilence = false; // 沈黙チェック中かどうか
-    private const float silenceThreshold = 10f; // 沈黙と判断する時間（秒）
+    private const float silenceThreshold = 15f; // 沈黙と判断する時間（秒）
 
     private string apiKey;
 
@@ -97,8 +97,8 @@ public class TexttoSpeach : MonoBehaviour
             silenceTimer += Time.deltaTime;
             if (silenceTimer >= silenceThreshold)
             {
-                Debug.Log("silence for 10seconds");
-                HandleSilence();
+                Debug.Log("silence for 15seconds");
+                HandleSilence(); //沈黙続いたらまくしたてる、onにしたければコメントアウト外す
             }
         }
     }
