@@ -10,6 +10,7 @@ mainはアバターなしのもの、devでは実際に研究の検証で使用�
 - 返答生成：OpenAI API
 - Text to speech：OpenAI Text-to-speech
 - 対話内容の保存：Azure Table Storage
+- MRTK3
 
 
 ## 動作環境
